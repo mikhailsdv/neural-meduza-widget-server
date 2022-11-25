@@ -2,13 +2,11 @@ const {
 	API_ID,
 	API_HASH,
 	CHANNEL_ID,
-	CHANNEL_USERNAME,
-	CHECK_INTERVAL_MS,
 	PORT,
 	CACHE_FILE,
 	DETA_PROJECT_KEY,
 } = require("./config")
-const {Api, TelegramClient} = require("telegram")
+const {TelegramClient} = require("telegram")
 const {StoreSession} = require("telegram/sessions")
 const {NewMessage} = require("telegram/events")
 const input = require("input")
