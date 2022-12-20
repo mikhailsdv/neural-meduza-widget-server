@@ -16,7 +16,7 @@ const express = require("express");
 const expressApp = express();
 const deta = Deta(DETA_PROJECT_KEY);
 const db = deta.Base("ios");
-const {addMinus100, log} = require("./utils")
+const {addMinus100} = require("./utils")
 const storeSession = new StoreSession("session")
 
 ;(async () => {
@@ -52,15 +52,19 @@ expressApp.get("/title", async (req, res) => {
 		iso_date: new Date().toISOString(),
 		unix_date: new Date().valueOf(),
 	}
-	log("New request", params)
-	await db.put(params)
+	console.log("New request", params)
+	try {
+		params.uuid && params.systemName === "iOS" && await db.put(params)
+	}catch(err) {
+		console.log(err)
+	}
 });
 expressApp.listen(PORT, () => {
 	console.log(`Example app listening on port ${PORT}`)
 })
 
 ;(async () => {
-	log("Loading interactive example...")
+	console.log("Loading interactive example...")
 	const client = new TelegramClient(storeSession, API_ID, API_HASH, {
 		connectionRetries: 999,
 		requestRetries: 999,
@@ -71,9 +75,9 @@ expressApp.listen(PORT, () => {
 		phoneNumber: async () => await input.text("Please enter your phone number:\n"),
 		password: async () => await input.text("Please enter your password:\n"),
 		phoneCode: async () => await input.text("Please enter the secret code:\n"),
-		onError: log,
+		onError: console.error,
 	})
-	log("You should now be connected.")
+	console.log("You should now be connected.")
 	client.session.save() // Save session to avoid logging in again
 
 	client.addEventHandler(async ({message}) => {
@@ -85,7 +89,6 @@ expressApp.listen(PORT, () => {
 			fwdFrom,
 		} = message
 		let channelId = peerId?.channelId?.value
-		console.log(channelId)
 		channelId && (channelId = addMinus100(channelId))
 		if (
 			!channelId ||
