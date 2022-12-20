@@ -101,6 +101,6 @@ expressApp.listen(PORT, () => {
 			return
 		}
 		await fs.promises.writeFile(CACHE_FILE, text)
-		log("New message saved message:", text)
+		console.log("New message saved message:", text)
 	}, new NewMessage({}))
 })()
